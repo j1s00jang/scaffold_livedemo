@@ -72,8 +72,36 @@ const defaultProfileData: ProfileData = {
   profileImageUri: "",
 };
 
+export const demoProfileData: ProfileData = {
+  name: "Jisoo Jang",
+  dateOfBirth: "2001-09-14",
+  gender: "Female",
+  phone: "604-555-0192",
+  email: "jisoo.jang@example.com",
+  address: "1234 Main St",
+  postalCode: "V5K 0A1",
+  province: "British Columbia",
+  citizenshipStatus: "Permanent Resident",
+  householdSize: "3",
+  familyComposition: "Self, parent, sibling",
+  annualFamilyNetIncome: "$48,000",
+  guardianName: "Min Jang",
+  guardianPhone: "604-555-0177",
+  guardianEmail: "min.jang@example.com",
+  highestEducation: "Trade School",
+  highSchoolName: "Vancouver Technical Secondary",
+  graduationDate: "2019-06-20",
+  tradeSchoolName: "BCIT",
+  tradeProgramName: "Electrical Foundation",
+  tradeGraduationDate: "2024-05-15",
+  trade: "Electrician",
+  apprenticeshipLevel: "Level 2",
+  profileImageUri: "",
+};
+
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 const STORAGE_KEY = "@profile_data";
+const DEMO_MODE = process.env.EXPO_PUBLIC_DEMO_MODE === "1";
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [profileData, setProfileData] = useState<ProfileData>(defaultProfileData);
@@ -91,6 +119,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         const parsedData = JSON.parse(storedData);
         // Keep the default shape but hydrate with anything we previously saved.
         setProfileData({ ...defaultProfileData, ...parsedData });
+      } else if (DEMO_MODE) {
+        setProfileData(demoProfileData);
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(demoProfileData));
       }
     } catch (error) {
       console.error("Error loading profile data:", error);

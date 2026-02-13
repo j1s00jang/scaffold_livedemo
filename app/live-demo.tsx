@@ -1,22 +1,19 @@
-import { useAuth } from "@/contexts/AuthContext";
+import { demoProfileData, useProfile } from "@/contexts/ProfileContext";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 
-const DEMO_MODE = process.env.EXPO_PUBLIC_DEMO_MODE === "1";
-
-export default function Index() {
+export default function LiveDemoEntry() {
   const router = useRouter();
-  const { session, initializing } = useAuth();
+  const { updateProfileData } = useProfile();
 
   useEffect(() => {
-    if (initializing) return;
-    if (DEMO_MODE) {
+    updateProfileData(demoProfileData);
+    const timer = setTimeout(() => {
       router.replace("/(tabs)");
-      return;
-    }
-    router.replace(session ? "/eligibility-info" : "/sign-in");
-  }, [initializing, session, router]);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [router, updateProfileData]);
 
   return (
     <View
